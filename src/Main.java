@@ -9,9 +9,19 @@ public class Main {
         //Loads all of the jobs into an Arraylist
         ArrayList jobs = new ArrayList<Vertex>();
         jobs = loadJobs();
-
-        //Finds the largest possible subset of positive weights
-        getSubset(jobs);
+        Graph g = new Graph(jobs);
+        ArrayList<Integer> topJobs = g.findMaximumProfit();
+        if(topJobs == null) {
+            System.out.print("No jobs produce profit!");
+        } else {
+            System.out.print("Jobs to be Performed: [ ");
+            for (int i = 0; i < topJobs.size(); i++) {
+                System.out.print(topJobs.get(i) + " ");
+            }
+            System.out.print("]");
+            System.out.println();
+            System.out.println("Total Profit: " + g.checkProfit(topJobs));
+        }
     }
 
     private static ArrayList loadJobs( ) {
@@ -55,79 +65,5 @@ public class Main {
 
         //returns the array list
         return jobs;
-    }
-
-    private static void getSubset(ArrayList<Vertex> jobs) {
-
-        int totalWeight = 0, bestWeight = 0;
-        ArrayList<Vertex> bestJobs;
-
-        //Check all of the jobs at once to find weight
-        totalWeight = checkProfit(jobs);
-
-        // Sets the best weight and job list to all jobs
-        bestJobs = jobs;
-        bestWeight = totalWeight;
-
-        int size = jobs.size();
-        int[] jobCount = new int[size];
-
-        //Get an array of job numbers to parse through
-        for(int i = 0; i < size; i++) {
-            Vertex temp = jobs.get(i);
-            jobCount[i] = temp.getJobNumber();
-        }
-
-
-        //Create the Arraylist of Subsets
-        ArrayList<ArrayList<Vertex>> subsets = new ArrayList<>();
-        for(int i = 0; i < size; i++) {
-            subsets.add(buildSubSet(jobs, i));
-        }
-
-        //Create the superset of subsets
-        
-
-        while(!subsets.isEmpty()) {
-            for(int i = 0; i < subsets.size(); i++) {
-                ArrayList<Vertex> temp = subsets.remove(i);
-                totalWeight = checkProfit(temp);
-                if(totalWeight > bestWeight) {
-                    bestWeight = totalWeight;
-                    bestJobs = temp;
-                }
-            }
-        }
-
-
-        // Checks if the weight is above 0, if it is, produces the list and the weight. If it isnt, doesn't do anything.
-        if(bestWeight <= 0) {
-            System.out.println("There is no profit in completing jobs.");
-        } else {
-            System.out.println(" The following jobs produces the most profit: ");
-            System.out.print("[ ");
-            for(int i = 0; i < bestJobs.size(); i++) {
-                Vertex temp = bestJobs.get(i);
-                System.out.print(temp.getJobNumber() + " ");
-            }
-            System.out.print("]");
-            System.out.println();
-            System.out.println("Total Profit from completing jobs: " + bestWeight);
-        }
-
-
-    }
-
-    private static int checkProfit(ArrayList<Vertex> arrayList) {
-        int weight = 0;
-        for(int i = 0; i < arrayList.size(); i++) {
-            Vertex temp = arrayList.get(i);
-            weight = weight + temp.getJobWeight();
-        }
-        return weight;
-    }
-
-    private static ArrayList<Vertex> buildSubSet(ArrayList<Vertex> jobs, int jobNum) {
-
     }
 }
